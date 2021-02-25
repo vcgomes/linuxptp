@@ -76,6 +76,31 @@ enum {
 #define PTP_PEROUT_REQUEST2 PTP_PEROUT_REQUEST
 #endif
 
+#ifndef PTP_CROSSTS_REQUEST
+#define PTP_CROSSTS_REQUEST _IOW(PTP_CLK_MAGIC, 19, struct ptp_crossts_request)
+
+struct ptp_crossts_request {
+	unsigned int index;
+	unsigned int flags;
+	struct ptp_clock_time period; /* Desired period, zero means disable. */
+};
+
+struct ptp_extts_event_cross {
+	struct ptp_clock_time t; /* Time event occured. */
+	unsigned int index;      /* Which channel produced the event. */
+	unsigned int flags;
+	__s64 tstamp;
+};
+
+/* Event is CROSS TSTAMP, ptp_extts_event.tstamp is valid */
+#define PTP_EVENT_CROSS	(1<<0)
+
+/* CROSSTS event exports the delay between t and tstamp (ns units) */
+#define PTP_EVENT_CROSS_DELAY(flags) ((flags) >> 16)
+
+#endif
+
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5,8,0)
 
 /* from upcoming Linux kernel version 5.8 */
